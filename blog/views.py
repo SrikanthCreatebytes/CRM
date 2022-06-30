@@ -61,10 +61,10 @@ class EnquireListAPiView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, status):
-        space = request.GET.get('status')
-        if space == 'public':
-            enquiry_set = Enquire.objects.filter(claimed_by__null=True)
-        elif space == 'private':
+
+        if status == 'public':
+            enquiry_set = Enquire.objects.filter(claimed_by__isnull=True)
+        elif status == 'private':
             enquiry_set = Enquire.objects.filter(claimed_by=request.user)
         else:
             enquiry_set = Enquire.objects.all()
