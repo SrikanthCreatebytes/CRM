@@ -5,6 +5,6 @@ urlpatterns = [
     path('api-token-auth/', views.obtain_auth_token),
     path('register/', register_api, name='register'),
     path('login/', login, name='login'),
-    path('enquiry/list', EnquireListAPiView.as_view(), name='enquiry_list')
+    path('enquiry/list/<str:status>', EnquireListAPiView.as_view(), name='enquiry_list')
 
 ]

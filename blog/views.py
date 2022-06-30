@@ -15,6 +15,8 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.views import status
 from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, GenericAPIView
+from rest_framework.views import APIView
 
 
 @api_view(['POST'])
@@ -54,14 +56,20 @@ def login(request):
                             status=HTTP_404_NOT_FOUND)
 
 
-class EnquireListAPiView(ListAPIView):
+class EnquireListAPiView(APIView):
+    authentication_classes = [TokenAuthentication]
     permission_classes = [AllowAny]
-    queryset = Enquire.objects.all()
-    serializer_class = EnquireListSerializer
 
-    def get(self, request, *args, **kwargs):
-        enquiry_set = Enquire.objects.filter(Q(claimed_by=None) | Q(claimed_by=request.user))
+    def get(self, request, status):
+        space = request.GET.get('status')
+        if space == 'public':
+            enquiry_set = Enquire.objects.filter(claimed_by__null=True)
+        elif space == 'private':
+            enquiry_set = Enquire.objects.filter(claimed_by=request.user)
+        else:
+            enquiry_set = Enquire.objects.all()
         serializer = EnquireListSerializer(enquiry_set, many=True)
+
         return Response(serializer.data)
 
 

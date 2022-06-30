@@ -24,14 +24,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             }
         }
 
-    def create(self, validated_data):
-        username = validated_data.get('username')
-        email = validated_data.get('email')
-        password = validated_data.get('password')
-        role = validated_data.get('role')
-        user = User.objects.create(username=username, email=email, password=password, role=role)
-        return user
-
     def validate_password(self, value):
 
         total_digits = len(re.findall('[0-9]', value))
@@ -55,6 +47,15 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Password should be contain minimum of 8 letters')
         if total_digits < 2:
             raise serializers.ValidationError('Password should be contain minimum of 2 numbers')
+        return value
+
+    def create(self, validated_data):
+        username = validated_data.get('username')
+        email = validated_data.get('email')
+        password = validated_data.get('password')
+        role = validated_data.get('role')
+        user = User.objects.create(username=username, email=email, password=password, role=role)
+        return user
 
 
 class EnquireListSerializer(serializers.ModelSerializer):
